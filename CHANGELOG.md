@@ -1,3 +1,17 @@
+<a name="v0.96.0"></a>
+## v0.96.0
+
+* Update to LSP 3.18.0
+* Inline completion is no longer behind the `proposed` feature flag
+* Add notebook document support (3.17)
+* Add `workspace/textDocumentContent` request (3.18)
+* Add `workspace/foldingRange/refresh` request (3.18)
+* Add `SnippetTextEdit`, `StringValue`, `WorkspaceEditMetadata` (3.18)
+* Add `TextDocumentFilter` variant types (3.18)
+* Add `DiagnosticMessage` enum supporting `MarkupContent` (3.18)
+* Add `Command.tooltip`, `MessageType::DEBUG`, `LocationUriOnly` (3.18)
+* Add missing fields to `DiagnosticClientCapabilities` and `WorkspaceEditClientCapabilities`
+
 <a name="v0.95.1"></a>
 ### v0.95.1 (2024-03-18)
 
