@@ -1166,6 +1166,75 @@ pub struct DocumentFilter {
 /// A document selector is the combination of one or many document filters.
 pub type DocumentSelector = Vec<DocumentFilter>;
 
+/// A text document filter where `language` is required.
+///
+/// @since 3.18.0
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
+pub struct TextDocumentFilterLanguage {
+    /// A language id, like `typescript`.
+    pub language: String,
+
+    /// A Uri scheme, like `file` or `untitled`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub scheme: Option<String>,
+
+    /// A glob pattern, like `*.{ts,js}`.
+    ///
+    /// @since 3.18.0 - support for relative patterns.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub pattern: Option<GlobPattern>,
+}
+
+/// A text document filter where `scheme` is required.
+///
+/// @since 3.18.0
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
+pub struct TextDocumentFilterScheme {
+    /// A language id, like `typescript`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub language: Option<String>,
+
+    /// A Uri scheme, like `file` or `untitled`.
+    pub scheme: String,
+
+    /// A glob pattern, like `*.{ts,js}`.
+    ///
+    /// @since 3.18.0 - support for relative patterns.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub pattern: Option<GlobPattern>,
+}
+
+/// A text document filter where `pattern` is required.
+///
+/// @since 3.18.0
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
+pub struct TextDocumentFilterPattern {
+    /// A language id, like `typescript`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub language: Option<String>,
+
+    /// A Uri scheme, like `file` or `untitled`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub scheme: Option<String>,
+
+    /// A glob pattern, like `*.{ts,js}`.
+    ///
+    /// @since 3.18.0 - support for relative patterns.
+    pub pattern: GlobPattern,
+}
+
+/// A text document filter identifies a document by different properties
+/// where one of `language`, `scheme`, or `pattern` is required.
+///
+/// @since 3.18.0
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
+#[serde(untagged)]
+pub enum TextDocumentFilter {
+    Language(TextDocumentFilterLanguage),
+    Scheme(TextDocumentFilterScheme),
+    Pattern(TextDocumentFilterPattern),
+}
+
 // ========================= Actual Protocol =========================
 
 #[derive(Debug, PartialEq, Clone, Deserialize, Serialize, Default)]
