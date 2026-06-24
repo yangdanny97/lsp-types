@@ -587,6 +587,23 @@ pub struct AnnotatedTextEdit {
     pub annotation_id: ChangeAnnotationIdentifier,
 }
 
+/// An interactive text edit using a snippet.
+///
+/// @since 3.18.0
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SnippetTextEdit {
+    /// The range of the text document to be manipulated.
+    pub range: Range,
+
+    /// The snippet to be inserted.
+    pub snippet: StringValue,
+
+    /// The actual identifier of the snippet edit.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub annotation_id: Option<ChangeAnnotationIdentifier>,
+}
+
 /// Describes textual changes on a single text document. The text document is referred to as a
 /// `OptionalVersionedTextDocumentIdentifier` to allow clients to check the text document version before an
 /// edit is applied. A `TextDocumentEdit` describes all changes on a version Si and after they are
@@ -602,7 +619,21 @@ pub struct TextDocumentEdit {
     ///
     /// @since 3.16.0 - support for AnnotatedTextEdit. This is guarded by the
     /// client capability `workspace.workspaceEdit.changeAnnotationSupport`
-    pub edits: Vec<OneOf<TextEdit, AnnotatedTextEdit>>,
+    ///
+    /// @since 3.18.0 - support for SnippetTextEdit. This is guarded by the
+    /// client capability `workspace.workspaceEdit.snippetEditSupport`
+    pub edits: Vec<TextEditOrAnnotatedOrSnippet>,
+}
+
+/// A text edit, an annotated text edit, or a snippet text edit.
+///
+/// @since 3.18.0
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
+#[serde(untagged)]
+pub enum TextEditOrAnnotatedOrSnippet {
+    TextEdit(TextEdit),
+    AnnotatedTextEdit(AnnotatedTextEdit),
+    SnippetTextEdit(SnippetTextEdit),
 }
 
 /// Additional information that describes document changes.
