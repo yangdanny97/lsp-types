@@ -376,6 +376,7 @@ mod tests {
             &vec![
                 CodeActionOrCommand::Command(Command {
                     title: "title".to_string(),
+                    tooltip: None,
                     command: "command".to_string(),
                     arguments: None,
                 }),

@@ -285,6 +285,14 @@ impl Location {
     }
 }
 
+/// Location with only uri and no range.
+///
+/// @since 3.18.0
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
+pub struct LocationUriOnly {
+    pub uri: Url,
+}
+
 /// Represents a link between a source and a target location.
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -498,6 +506,11 @@ impl DiagnosticTag {
 pub struct Command {
     /// Title of the command, like `save`.
     pub title: String,
+    /// An optional tooltip.
+    ///
+    /// @since 3.18.0
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tooltip: Option<String>,
     /// The identifier of the actual command handler.
     pub command: String,
     /// Arguments that the command handler should be
@@ -510,6 +523,7 @@ impl Command {
     pub fn new(title: String, command: String, arguments: Option<Vec<Value>>) -> Command {
         Command {
             title,
+            tooltip: None,
             command,
             arguments,
         }
@@ -1217,6 +1231,18 @@ pub struct WorkspaceEditClientCapabilities {
     /// @since 3.16.0
     #[serde(skip_serializing_if = "Option::is_none")]
     pub change_annotation_support: Option<ChangeAnnotationWorkspaceEditClientCapabilities>,
+
+    /// Whether the client supports `WorkspaceEditMetadata` in `WorkspaceEdit`s.
+    ///
+    /// @since 3.18.0
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub metadata_support: Option<bool>,
+
+    /// Whether the client supports snippets as text edits.
+    ///
+    /// @since 3.18.0
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub snippet_edit_support: Option<bool>,
 }
 
 #[derive(Debug, Eq, PartialEq, Deserialize, Serialize, Copy, Clone)]
@@ -1361,6 +1387,12 @@ pub struct WorkspaceClientCapabilities {
     /// since 3.17.0
     #[serde(skip_serializing_if = "Option::is_none")]
     pub diagnostic: Option<DiagnosticWorkspaceClientCapabilities>,
+
+    /// Client workspace capabilities specific to folding ranges.
+    ///
+    /// @since 3.18.0
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub folding_range: Option<FoldingRangeWorkspaceClientCapabilities>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Default, Deserialize, Serialize)]
@@ -1452,12 +1484,32 @@ impl<T> TagSupport<T> {
     }
 }
 
+/// Client capabilities specific to text document filters.
+///
+/// @since 3.18.0
+#[derive(Debug, Eq, PartialEq, Clone, Default, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TextDocumentFilterClientCapabilities {
+    /// The client supports relative patterns in text document filters.
+    ///
+    /// @since 3.18.0
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub relative_pattern_support: Option<bool>,
+}
+
 /// Text document specific client capabilities.
 #[derive(Debug, Eq, PartialEq, Clone, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TextDocumentClientCapabilities {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub synchronization: Option<TextDocumentSyncClientCapabilities>,
+
+    /// Defines which filters the client supports.
+    ///
+    /// @since 3.18.0
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub filters: Option<TextDocumentFilterClientCapabilities>,
+
     /// Capabilities specific to the `textDocument/completion`
     #[serde(skip_serializing_if = "Option::is_none")]
     pub completion: Option<CompletionClientCapabilities>,
@@ -2656,6 +2708,17 @@ pub struct ExecuteCommandRegistrationOptions {
     pub execute_command_options: ExecuteCommandOptions,
 }
 
+/// Additional data about a workspace edit.
+///
+/// @since 3.18.0
+#[derive(Debug, Eq, PartialEq, Clone, Default, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WorkspaceEditMetadata {
+    /// Signal to the editor that this edit is a refactoring.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub is_refactoring: Option<bool>,
+}
+
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ApplyWorkspaceEditParams {
@@ -2667,6 +2730,12 @@ pub struct ApplyWorkspaceEditParams {
 
     /// The edits to apply.
     pub edit: WorkspaceEdit,
+
+    /// Additional data about the edit.
+    ///
+    /// @since 3.18.0
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<WorkspaceEditMetadata>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]

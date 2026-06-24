@@ -143,3 +143,17 @@ pub struct FoldingRange {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub collapsed_text: Option<String>,
 }
+
+/// Client workspace capabilities specific to folding ranges.
+///
+/// @since 3.18.0
+#[derive(Debug, Eq, PartialEq, Clone, Default, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FoldingRangeWorkspaceClientCapabilities {
+    /// Whether the client implementation supports a refresh request sent from the
+    /// server to the client.
+    ///
+    /// @since 3.18.0
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub refresh_support: Option<bool>,
+}

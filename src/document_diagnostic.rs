@@ -4,8 +4,9 @@ use serde::{Deserialize, Serialize};
 use url::Url;
 
 use crate::{
-    Diagnostic, PartialResultParams, StaticRegistrationOptions, TextDocumentIdentifier,
-    TextDocumentRegistrationOptions, WorkDoneProgressOptions, WorkDoneProgressParams,
+    Diagnostic, DiagnosticTag, PartialResultParams, StaticRegistrationOptions,
+    TagSupport, TextDocumentIdentifier, TextDocumentRegistrationOptions,
+    WorkDoneProgressOptions, WorkDoneProgressParams,
 };
 
 /// Client capabilities specific to diagnostic pull requests.
@@ -24,6 +25,34 @@ pub struct DiagnosticClientCapabilities {
     /// Whether the clients supports related documents for document diagnostic pulls.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub related_document_support: Option<bool>,
+
+    /// Whether the clients accepts diagnostics with related information.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub related_information: Option<bool>,
+
+    /// Client supports the tag property to provide meta data about a diagnostic.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tag_support: Option<TagSupport<DiagnosticTag>>,
+
+    /// Whether the client supports a `codeDescription` property on `Diagnostic`.
+    ///
+    /// @since 3.16.0
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub code_description_support: Option<bool>,
+
+    /// Whether code action supports the `data` property which is
+    /// preserved between a `textDocument/publishDiagnostics` and
+    /// `textDocument/codeAction` request.
+    ///
+    /// @since 3.16.0
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub data_support: Option<bool>,
+
+    /// Whether the client supports `MarkupContent` in diagnostic messages.
+    ///
+    /// @since 3.18.0
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub markup_message_support: Option<bool>,
 }
 
 /// Diagnostic options.

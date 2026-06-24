@@ -192,6 +192,9 @@ macro_rules! lsp_request {
     ("workspace/codeLens/refresh") => {
         $crate::request::CodeLensRefresh
     };
+    ("workspace/foldingRange/refresh") => {
+        $crate::request::FoldingRangeRefresh
+    };
     ("workspace/inlayHint/refresh") => {
         $crate::request::InlayHintRefreshRequest
     };
@@ -785,6 +788,18 @@ impl Request for CodeLensRefresh {
     const METHOD: &'static str = "workspace/codeLens/refresh";
 }
 
+/// The `workspace/foldingRange/refresh` request is sent from the server to the client.
+/// Servers can use it to ask clients to refresh the folding ranges currently shown in editors.
+///
+/// @since 3.18.0
+pub enum FoldingRangeRefresh {}
+
+impl Request for FoldingRangeRefresh {
+    type Params = ();
+    type Result = ();
+    const METHOD: &'static str = "workspace/foldingRange/refresh";
+}
+
 /// The will create files request is sent from the client to the server before files are actually created as long as the creation is triggered from within the client. The request can return a WorkspaceEdit which will be applied to workspace before the files are created. Please note that clients might drop results if computing the edit took too long or if a server constantly fails on this request. This is done to keep creates fast and reliable.
 pub enum WillCreateFiles {}
 
@@ -1047,6 +1062,7 @@ mod test {
         check_macro!("workspace/workspaceFolders");
         check_macro!("workspace/semanticTokens/refresh");
         check_macro!("workspace/codeLens/refresh");
+        check_macro!("workspace/foldingRange/refresh");
         check_macro!("workspace/inlayHint/refresh");
         check_macro!("workspace/inlineValue/refresh");
 
