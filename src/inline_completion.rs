@@ -1,6 +1,6 @@
 use crate::{
-    Command, InsertTextFormat, Range, StaticRegistrationOptions, TextDocumentPositionParams,
-    TextDocumentRegistrationOptions, WorkDoneProgressOptions, WorkDoneProgressParams,
+    Command, Range, StaticRegistrationOptions, StringValue, TextDocumentPositionParams,
+    TextDocumentRegistrationOptions, WorkDoneProgressOptions, WorkDoneProgressParams, OneOf,
 };
 use serde::{Deserialize, Serialize};
 
@@ -135,7 +135,7 @@ pub struct InlineCompletionList {
 pub struct InlineCompletionItem {
     /// The text to replace the range with. Must be set.
     /// Is used both for the preview and the accept operation.
-    pub insert_text: String,
+    pub insert_text: OneOf<String, StringValue>,
     /// A text that is used to decide if this inline completion should be
     /// shown. When `falsy` the [`InlineCompletionItem::insertText`] is
     /// used.
@@ -155,8 +155,4 @@ pub struct InlineCompletionItem {
     /// completion.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub command: Option<Command>,
-    /// The format of the insert text. The format applies to the `insertText`.
-    /// If omitted defaults to `InsertTextFormat.PlainText`.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub insert_text_format: Option<InsertTextFormat>,
 }

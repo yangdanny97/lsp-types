@@ -153,9 +153,7 @@ pub use inlay_hint::*;
 mod inline_value;
 pub use inline_value::*;
 
-#[cfg(feature = "proposed")]
 mod inline_completion;
-#[cfg(feature = "proposed")]
 pub use inline_completion::*;
 
 mod moniker;
@@ -550,6 +548,24 @@ impl TextEdit {
     pub fn new(range: Range, new_text: String) -> TextEdit {
         TextEdit { range, new_text }
     }
+}
+
+/// A string value used to represent a snippet.
+///
+/// @since 3.18.0
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
+pub struct StringValue {
+    /// The kind of string value. Always `snippet`.
+    pub kind: StringValueKind,
+    /// The snippet string.
+    pub value: String,
+}
+
+/// @since 3.18.0
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum StringValueKind {
+    Snippet,
 }
 
 /// An identifier referring to a change annotation managed by a workspace
@@ -1646,7 +1662,6 @@ pub struct TextDocumentClientCapabilities {
     ///
     /// @since 3.18.0
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[cfg(feature = "proposed")]
     pub inline_completion: Option<InlineCompletionClientCapabilities>,
 }
 
@@ -2110,7 +2125,6 @@ pub struct ServerCapabilities {
     ///
     /// @since 3.18.0
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[cfg(feature = "proposed")]
     pub inline_completion_provider: Option<OneOf<bool, InlineCompletionOptions>>,
 
     /// Experimental server capabilities.

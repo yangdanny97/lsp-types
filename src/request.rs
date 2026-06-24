@@ -162,6 +162,9 @@ macro_rules! lsp_request {
     ("textDocument/inlineValue") => {
         $crate::request::InlineValueRequest
     };
+    ("textDocument/inlineCompletion") => {
+        $crate::request::InlineCompletionRequest
+    };
     ("textDocument/diagnostic") => {
         $crate::request::DocumentDiagnosticRequest
     };
@@ -664,10 +667,8 @@ impl Request for PrepareRenameRequest {
 }
 
 #[derive(Debug)]
-#[cfg(feature = "proposed")]
 pub enum InlineCompletionRequest {}
 
-#[cfg(feature = "proposed")]
 impl Request for InlineCompletionRequest {
     type Params = InlineCompletionParams;
     type Result = Option<InlineCompletionResponse>;
@@ -1048,6 +1049,7 @@ mod test {
         check_macro!("textDocument/semanticTokens/range");
         check_macro!("textDocument/inlayHint");
         check_macro!("textDocument/inlineValue");
+        check_macro!("textDocument/inlineCompletion");
         check_macro!("textDocument/diagnostic");
 
         check_macro!("workspace/applyEdit");
@@ -1077,8 +1079,4 @@ mod test {
         check_macro!("typeHierarchy/supertypes");
         check_macro!("workspaceSymbol/resolve");
     }
-
-    #[test]
-    #[cfg(feature = "proposed")]
-    fn check_proposed_macro_definitions() {}
 }
