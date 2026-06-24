@@ -386,7 +386,10 @@ pub struct Diagnostic {
     pub source: Option<String>,
 
     /// The diagnostic's message.
-    pub message: String,
+    ///
+    /// @since 3.18.0 - support for MarkupContent. This is guarded by the
+    /// client capability `textDocument.diagnostic.markupMessageSupport`.
+    pub message: DiagnosticMessage,
 
     /// An array of related diagnostic information, e.g. when symbol-names within
     /// a scope collide all definitions can be marked via this property.
@@ -405,6 +408,40 @@ pub struct Diagnostic {
     pub data: Option<serde_json::Value>,
 }
 
+/// The diagnostic's message. Can be a plain string or a `MarkupContent`.
+///
+/// @since 3.18.0 - support for `MarkupContent`
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
+#[serde(untagged)]
+pub enum DiagnosticMessage {
+    String(String),
+    MarkupContent(MarkupContent),
+}
+
+impl Default for DiagnosticMessage {
+    fn default() -> Self {
+        DiagnosticMessage::String(String::new())
+    }
+}
+
+impl From<String> for DiagnosticMessage {
+    fn from(s: String) -> Self {
+        DiagnosticMessage::String(s)
+    }
+}
+
+impl From<&str> for DiagnosticMessage {
+    fn from(s: &str) -> Self {
+        DiagnosticMessage::String(s.to_owned())
+    }
+}
+
+impl From<MarkupContent> for DiagnosticMessage {
+    fn from(m: MarkupContent) -> Self {
+        DiagnosticMessage::MarkupContent(m)
+    }
+}
+
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CodeDescription {
@@ -417,7 +454,7 @@ impl Diagnostic {
         severity: Option<DiagnosticSeverity>,
         code: Option<NumberOrString>,
         source: Option<String>,
-        message: String,
+        message: impl Into<DiagnosticMessage>,
         related_information: Option<Vec<DiagnosticRelatedInformation>>,
         tags: Option<Vec<DiagnosticTag>>,
     ) -> Diagnostic {
@@ -426,14 +463,14 @@ impl Diagnostic {
             severity,
             code,
             source,
-            message,
+            message: message.into(),
             related_information,
             tags,
             ..Diagnostic::default()
         }
     }
 
-    pub fn new_simple(range: Range, message: String) -> Diagnostic {
+    pub fn new_simple(range: Range, message: impl Into<DiagnosticMessage>) -> Diagnostic {
         Self::new(range, None, None, None, message, None, None)
     }
 
@@ -442,7 +479,7 @@ impl Diagnostic {
         severity: DiagnosticSeverity,
         code_number: i32,
         source: Option<String>,
-        message: String,
+        message: impl Into<DiagnosticMessage>,
     ) -> Diagnostic {
         let code = Some(NumberOrString::Number(code_number));
         Self::new(range, Some(severity), code, source, message, None, None)
