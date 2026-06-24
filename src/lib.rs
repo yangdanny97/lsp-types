@@ -195,6 +195,9 @@ pub use workspace_folders::*;
 mod workspace_symbols;
 pub use workspace_symbols::*;
 
+mod text_document_content;
+pub use text_document_content::*;
+
 pub mod lsif;
 
 mod trace;
@@ -1477,6 +1480,12 @@ pub struct WorkspaceClientCapabilities {
     /// @since 3.18.0
     #[serde(skip_serializing_if = "Option::is_none")]
     pub folding_range: Option<FoldingRangeWorkspaceClientCapabilities>,
+
+    /// Client workspace capabilities specific to text document content.
+    ///
+    /// @since 3.18.0
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub text_document_content: Option<TextDocumentContentClientCapabilities>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Default, Deserialize, Serialize)]
@@ -2209,6 +2218,12 @@ pub struct WorkspaceServerCapabilities {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_operations: Option<WorkspaceFileOperationsServerCapabilities>,
+
+    /// The server provides text document content.
+    ///
+    /// @since 3.18.0
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub text_document_content: Option<TextDocumentContentRegistrationOptions>,
 }
 
 /// General parameters to to register for a capability.

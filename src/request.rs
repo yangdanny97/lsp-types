@@ -204,6 +204,12 @@ macro_rules! lsp_request {
     ("workspace/inlineValue/refresh") => {
         $crate::request::InlineValueRefreshRequest
     };
+    ("workspace/textDocumentContent") => {
+        $crate::request::TextDocumentContentRequest
+    };
+    ("workspace/textDocumentContent/refresh") => {
+        $crate::request::TextDocumentContentRefresh
+    };
     ("codeAction/resolve") => {
         $crate::request::CodeActionResolveRequest
     };
@@ -905,6 +911,30 @@ impl Request for InlineValueRefreshRequest {
     const METHOD: &'static str = "workspace/inlineValue/refresh";
 }
 
+/// The `workspace/textDocumentContent` request is sent from the client to the server to
+/// request the content of a text document managed by the server.
+///
+/// @since 3.18.0
+pub enum TextDocumentContentRequest {}
+
+impl Request for TextDocumentContentRequest {
+    type Params = TextDocumentContentParams;
+    type Result = TextDocumentContentResult;
+    const METHOD: &'static str = "workspace/textDocumentContent";
+}
+
+/// The `workspace/textDocumentContent/refresh` request is sent from the server to the client
+/// to ask the client to refresh the content of a specific text document.
+///
+/// @since 3.18.0
+pub enum TextDocumentContentRefresh {}
+
+impl Request for TextDocumentContentRefresh {
+    type Params = TextDocumentContentRefreshParams;
+    type Result = ();
+    const METHOD: &'static str = "workspace/textDocumentContent/refresh";
+}
+
 /// The text document diagnostic request is sent from the client to the server to ask the server to
 /// compute the diagnostics for a given document. As with other pull requests the server is asked
 /// to compute the diagnostics for the currently synced version of the document.
@@ -1067,6 +1097,8 @@ mod test {
         check_macro!("workspace/foldingRange/refresh");
         check_macro!("workspace/inlayHint/refresh");
         check_macro!("workspace/inlineValue/refresh");
+        check_macro!("workspace/textDocumentContent");
+        check_macro!("workspace/textDocumentContent/refresh");
 
         check_macro!("callHierarchy/incomingCalls");
         check_macro!("callHierarchy/outgoingCalls");
