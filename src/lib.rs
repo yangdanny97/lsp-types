@@ -159,6 +159,9 @@ pub use inline_completion::*;
 mod moniker;
 pub use moniker::*;
 
+mod notebook;
+pub use notebook::*;
+
 mod progress;
 pub use progress::*;
 
@@ -1762,6 +1765,12 @@ pub struct ClientCapabilities {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub general: Option<GeneralClientCapabilities>,
 
+    /// Capabilities specific to the notebook document support.
+    ///
+    /// @since 3.17.0
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub notebook_document: Option<NotebookDocumentClientCapabilities>,
+
     /// Unofficial UT8-offsets extension.
     ///
     /// See https://clangd.llvm.org/extensions.html#utf-8-offsets.
@@ -2069,6 +2078,12 @@ pub struct ServerCapabilities {
     /// Defines how text documents are synced.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub text_document_sync: Option<TextDocumentSyncCapability>,
+
+    /// Defines how notebook documents are synced.
+    ///
+    /// @since 3.17.0
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub notebook_document_sync: Option<OneOf<NotebookDocumentSyncOptions, NotebookDocumentSyncRegistrationOptions>>,
 
     /// Capabilities specific to `textDocument/selectionRange` requests.
     #[serde(skip_serializing_if = "Option::is_none")]

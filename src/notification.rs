@@ -79,6 +79,18 @@ macro_rules! lsp_notification {
     ("workspace/didDeleteFiles") => {
         $crate::notification::DidDeleteFiles
     };
+    ("notebookDocument/didOpen") => {
+        $crate::notification::DidOpenNotebookDocument
+    };
+    ("notebookDocument/didChange") => {
+        $crate::notification::DidChangeNotebookDocument
+    };
+    ("notebookDocument/didSave") => {
+        $crate::notification::DidSaveNotebookDocument
+    };
+    ("notebookDocument/didClose") => {
+        $crate::notification::DidCloseNotebookDocument
+    };
 }
 
 /// The base protocol now offers support for request cancellation. To cancel a request,
@@ -309,6 +321,54 @@ impl Notification for DidDeleteFiles {
     const METHOD: &'static str = "workspace/didDeleteFiles";
 }
 
+/// The notebook document open notification is sent from the client to the server when a
+/// notebook document is opened.
+///
+/// @since 3.17.0
+#[derive(Debug)]
+pub enum DidOpenNotebookDocument {}
+
+impl Notification for DidOpenNotebookDocument {
+    type Params = DidOpenNotebookDocumentParams;
+    const METHOD: &'static str = "notebookDocument/didOpen";
+}
+
+/// The notebook document change notification is sent from the client to the server when a
+/// notebook document changes.
+///
+/// @since 3.17.0
+#[derive(Debug)]
+pub enum DidChangeNotebookDocument {}
+
+impl Notification for DidChangeNotebookDocument {
+    type Params = DidChangeNotebookDocumentParams;
+    const METHOD: &'static str = "notebookDocument/didChange";
+}
+
+/// The notebook document save notification is sent from the client to the server when a
+/// notebook document is saved.
+///
+/// @since 3.17.0
+#[derive(Debug)]
+pub enum DidSaveNotebookDocument {}
+
+impl Notification for DidSaveNotebookDocument {
+    type Params = DidSaveNotebookDocumentParams;
+    const METHOD: &'static str = "notebookDocument/didSave";
+}
+
+/// The notebook document close notification is sent from the client to the server when a
+/// notebook document is closed.
+///
+/// @since 3.17.0
+#[derive(Debug)]
+pub enum DidCloseNotebookDocument {}
+
+impl Notification for DidCloseNotebookDocument {
+    type Params = DidCloseNotebookDocumentParams;
+    const METHOD: &'static str = "notebookDocument/didClose";
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -353,5 +413,9 @@ mod test {
         check_macro!("workspace/didCreateFiles");
         check_macro!("workspace/didRenameFiles");
         check_macro!("workspace/didDeleteFiles");
+        check_macro!("notebookDocument/didOpen");
+        check_macro!("notebookDocument/didChange");
+        check_macro!("notebookDocument/didSave");
+        check_macro!("notebookDocument/didClose");
     }
 }
